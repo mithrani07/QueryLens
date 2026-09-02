@@ -34,19 +34,23 @@
 }
 
 /* ---------------------------------------------------------- */
-/* Reset & base                                                */
+/* Reset & base                                               */
 /* ---------------------------------------------------------- */
-* {
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
 html {
   color-scheme: dark;
+  max-width: 100vw;
+  overflow-x: hidden;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
+  max-width: 100vw;
+  overflow-x: hidden;
   background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
@@ -102,7 +106,7 @@ textarea, input, select {
 }
 
 /* ---------------------------------------------------------- */
-/* Ambient backdrop — a single quiet glow, not scattered decoration */
+/* Ambient backdrop                                           */
 /* ---------------------------------------------------------- */
 .backdrop {
   position: fixed;
@@ -115,12 +119,13 @@ textarea, input, select {
 }
 
 /* ---------------------------------------------------------- */
-/* Page shell                                                  */
+/* Page shell                                                 */
 /* ---------------------------------------------------------- */
 .page {
   position: relative;
   z-index: 1;
   max-width: var(--max-width);
+  width: 100%;
   margin: 0 auto;
   padding: 48px 20px 64px;
   display: flex;
@@ -129,7 +134,7 @@ textarea, input, select {
 }
 
 /* ---------------------------------------------------------- */
-/* Header                                                      */
+/* Header                                                     */
 /* ---------------------------------------------------------- */
 .site-header {
   display: flex;
@@ -163,13 +168,15 @@ textarea, input, select {
 }
 
 /* ---------------------------------------------------------- */
-/* Panels — the glassmorphic surface used throughout           */
+/* Panels — glassmorphic surface                              */
 /* ---------------------------------------------------------- */
 .panel {
   background: var(--surface);
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-lg);
   padding: 22px;
+  width: 100%;
+  max-width: 100%;
   backdrop-filter: blur(20px) saturate(140%);
   -webkit-backdrop-filter: blur(20px) saturate(140%);
   box-shadow:
@@ -181,6 +188,7 @@ textarea, input, select {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  width: 100%;
 }
 
 .panel-head {
@@ -198,7 +206,7 @@ textarea, input, select {
 }
 
 /* ---------------------------------------------------------- */
-/* Source tabs                                                 */
+/* Source tabs                                                */
 /* ---------------------------------------------------------- */
 .source-tabs {
   display: inline-flex;
@@ -207,6 +215,7 @@ textarea, input, select {
   border: 1px solid var(--border-soft);
   border-radius: 999px;
   gap: 2px;
+  max-width: 100%;
 }
 
 .source-tab {
@@ -241,6 +250,7 @@ textarea:focus-visible {
 
 .source-view {
   display: none;
+  width: 100%;
 }
 
 .source-view.is-active {
@@ -248,7 +258,7 @@ textarea:focus-visible {
 }
 
 /* ---------------------------------------------------------- */
-/* Dropzone                                                     */
+/* Dropzone                                                   */
 /* ---------------------------------------------------------- */
 .dropzone {
   display: flex;
@@ -262,6 +272,7 @@ textarea:focus-visible {
   border-radius: var(--radius-md);
   background: rgba(255, 255, 255, 0.015);
   color: var(--text-muted);
+  width: 100%;
   transition: border-color var(--transition), background var(--transition), transform var(--transition);
 }
 
@@ -297,6 +308,8 @@ textarea:focus-visible {
   font-size: 0.92rem;
   font-weight: 500;
   color: var(--text);
+  max-width: 100%;
+  word-break: break-word;
 }
 
 .dropzone-subtitle {
@@ -305,12 +318,13 @@ textarea:focus-visible {
 }
 
 /* ---------------------------------------------------------- */
-/* Database form                                                */
+/* Database form                                              */
 /* ---------------------------------------------------------- */
 .db-form {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
 }
 
 .field-label {
@@ -346,6 +360,7 @@ textarea:focus-visible {
   display: flex;
   align-items: flex-end;
   gap: 10px;
+  width: 100%;
 }
 
 .db-form-field {
@@ -353,6 +368,7 @@ textarea:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  width: 100%;
 }
 
 .field-input--compact {
@@ -360,7 +376,7 @@ textarea:focus-visible {
 }
 
 /* ---------------------------------------------------------- */
-/* Schema preview badge                                         */
+/* Schema preview badge & table chips                         */
 /* ---------------------------------------------------------- */
 .schema-preview {
   margin-top: 16px;
@@ -369,6 +385,7 @@ textarea:focus-visible {
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
 }
 
 .schema-file {
@@ -376,13 +393,22 @@ textarea:focus-visible {
   align-items: center;
   gap: 8px;
   align-self: flex-start;
+  max-width: 100%;
   background: var(--accent-soft);
   border: 1px solid rgba(59, 130, 246, 0.3);
   color: var(--accent-strong);
-  padding: 6px 8px 6px 12px;
+  padding: 6px 12px;
   border-radius: 999px;
   font-size: 0.82rem;
   font-weight: 500;
+}
+
+#schema-filename {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .schema-file-icon {
@@ -400,6 +426,7 @@ textarea:focus-visible {
   border: none;
   background: transparent;
   color: var(--accent-strong);
+  flex-shrink: 0;
   transition: background var(--transition);
 }
 
@@ -411,6 +438,7 @@ textarea:focus-visible {
   display: flex;
   flex-wrap: wrap;
   gap: 6px;
+  width: 100%;
 }
 
 .schema-table-chip {
@@ -419,17 +447,23 @@ textarea:focus-visible {
   color: var(--text-muted);
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-soft);
-  padding: 4px 9px;
+  padding: 5px 10px;
   border-radius: var(--radius-sm);
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-block;
 }
 
 /* ---------------------------------------------------------- */
-/* Question panel                                                */
+/* Question panel                                             */
 /* ---------------------------------------------------------- */
 .question-box {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
 }
 
 .question-input {
@@ -465,6 +499,7 @@ textarea:focus-visible {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+  width: 100%;
 }
 
 .suggestion-chip {
@@ -474,6 +509,10 @@ textarea:focus-visible {
   font-size: 0.78rem;
   padding: 6px 12px;
   border-radius: 999px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   transition: border-color var(--transition), color var(--transition), background var(--transition);
 }
 
@@ -484,7 +523,7 @@ textarea:focus-visible {
 }
 
 /* ---------------------------------------------------------- */
-/* Buttons                                                       */
+/* Buttons                                                    */
 /* ---------------------------------------------------------- */
 .btn {
   display: inline-flex;
@@ -575,14 +614,16 @@ textarea:focus-visible {
 }
 
 /* ---------------------------------------------------------- */
-/* Output panel                                                  */
+/* Output panel                                               */
 /* ---------------------------------------------------------- */
 .output-panel {
   background: var(--bg-elevated);
+  width: 100%;
 }
 
 .output-block {
   margin-bottom: 22px;
+  width: 100%;
 }
 
 .output-block:last-child {
@@ -620,6 +661,7 @@ textarea:focus-visible {
   font-family: var(--font-mono);
   font-size: 0.86rem;
   line-height: 1.6;
+  max-width: 100%;
 }
 
 .sql-block code {
@@ -632,12 +674,14 @@ textarea:focus-visible {
   color: var(--text-muted);
   font-size: 0.92rem;
   line-height: 1.65;
+  word-break: break-word;
 }
 
 /* Result preview table */
 .output-preview {
   padding-top: 18px;
   border-top: 1px solid var(--border-soft);
+  width: 100%;
 }
 
 .preview-meta {
@@ -650,6 +694,8 @@ textarea:focus-visible {
   overflow-x: auto;
   border: 1px solid var(--border-soft);
   border-radius: var(--radius-sm);
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .result-table {
@@ -688,12 +734,13 @@ textarea:focus-visible {
 }
 
 /* ---------------------------------------------------------- */
-/* Loading skeleton                                              */
+/* Loading skeleton                                           */
 /* ---------------------------------------------------------- */
 .output-loading {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  width: 100%;
 }
 
 .loading-row {
@@ -768,7 +815,7 @@ textarea:focus-visible {
 }
 
 /* ---------------------------------------------------------- */
-/* Error state                                                    */
+/* Error state                                                */
 /* ---------------------------------------------------------- */
 .output-error {
   display: flex;
@@ -779,6 +826,7 @@ textarea:focus-visible {
   border: 1px solid rgba(248, 113, 113, 0.3);
   border-radius: var(--radius-md);
   color: #fca5a5;
+  width: 100%;
 }
 
 .output-error svg {
@@ -789,10 +837,11 @@ textarea:focus-visible {
 .output-error p {
   font-size: 0.88rem;
   line-height: 1.5;
+  word-break: break-word;
 }
 
 /* ---------------------------------------------------------- */
-/* Toast                                                          */
+/* Toast                                                      */
 /* ---------------------------------------------------------- */
 .toast {
   position: fixed;
@@ -810,6 +859,8 @@ textarea:focus-visible {
   pointer-events: none;
   transition: opacity var(--transition), transform var(--transition);
   z-index: 50;
+  max-width: calc(100vw - 32px);
+  text-align: center;
 }
 
 .toast.is-visible {
@@ -818,7 +869,7 @@ textarea:focus-visible {
 }
 
 /* ---------------------------------------------------------- */
-/* Footer                                                          */
+/* Footer                                                     */
 /* ---------------------------------------------------------- */
 .site-footer {
   text-align: center;
@@ -832,25 +883,25 @@ textarea:focus-visible {
 }
 
 /* ---------------------------------------------------------- */
-/* Responsive                                                      */
+/* Responsive Breakpoints                                     */
 /* ---------------------------------------------------------- */
 @media (max-width: 560px) {
   .page {
-    padding: 32px 14px 48px;
-    gap: 22px;
+    padding: 24px 12px 40px;
+    gap: 18px;
   }
 
   .panel {
-    padding: 18px;
+    padding: 16px 12px;
     border-radius: var(--radius-md);
   }
 
   .brand-name {
-    font-size: 1.3rem;
+    font-size: 1.25rem;
   }
 
   .dropzone {
-    padding: 28px 14px;
+    padding: 24px 12px;
   }
 
   .db-form-row {
@@ -864,12 +915,24 @@ textarea:focus-visible {
 
   .sql-block {
     font-size: 0.8rem;
-    padding: 14px;
+    padding: 12px;
   }
 
   .panel-head {
     flex-direction: column;
     align-items: flex-start;
+    gap: 10px;
+  }
+
+  .source-tabs {
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .source-tab {
+    flex: 1;
+    text-align: center;
+    padding: 6px 10px;
   }
 }
 
