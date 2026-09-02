@@ -1,0 +1,87 @@
+services:
+  - type: web
+    name: querylens
+    runtime: python
+    plan: free
+    region: oregon
+    branch: main
+    rootDir: backend
+    buildCommand: "pip install --upgrade pip && pip install -r requirements.txt"
+    startCommand: "uvicorn main:app --host 0.0.0.0 --port $PORT"
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: APP_NAME
+        value: QueryLens
+      - key: APP_VERSION
+        value: 1.0.0
+      - key: DEBUG
+        value: "false"
+      - key: ENVIRONMENT
+        value: production
+
+      # --- LLM provider ------------------------------------------------
+      - key: LLM_PROVIDER
+        value: groq
+      - key: GROQ_API_KEY
+        sync: false          # set in the Render dashboard — never committed
+      - key: GROQ_BASE_URL
+        value: https://api.groq.com/openai/v1
+      - key: GROQ_MODEL
+        value: llama-3.3-70b-versatile
+      - key: NVIDIA_API_KEY
+        sync: false          # only needed if LLM_PROVIDER=nvidia
+      - key: NVIDIA_BASE_URL
+        value: https://integrate.api.nvidia.com/v1
+      - key: NVIDIA_MODEL
+        value: meta/llama-3.1-70b-instruct
+      - key: LLM_TEMPERATURE
+        value: "0.1"
+      - key: LLM_MAX_TOKENS
+        value: "1024"
+      - key: LLM_TIMEOUT_SECONDS
+        value: "30"
+
+      # --- File uploads --------------------------------------------------
+      - key: UPLOAD_DIR
+        value: uploads
+      - key: MAX_UPLOAD_SIZE_MB
+        value: "15"
+
+      # --- DuckDB ----------------------------------------------------------
+      - key: DUCKDB_PATH
+        value: ":memory:"
+      - key: MAX_PREVIEW_ROWS
+        value: "50"
+      - key: QUERY_ROW_LIMIT
+        value: "1000"
+
+      # --- CORS --------------------------------------------------------------
+      # Frontend is served from the same origin as the API on Render (one
+      # service), so "*" is safe here — but it MUST stay paired with
+      # credentials disabled (this app never uses cookies/sessions). If you
+      # split the frontend into its own static site later, replace "*" with
+      # that site's exact URL instead of loosening credentials.
+      - key: CORS_ORIGINS
+        value: '["*"]'
+      - key: CORS_ALLOW_CREDENTIALS
+        value: "false"
+
+      # --- Server --------------------------------------------------------------
+      - key: HOST
+        value: 0.0.0.0
+      # PORT is injected automatically by Render; do not set it manually.
+
+# ------------------------------------------------------------------
+# Free-tier notes:
+#  - The service spins down after ~15 minutes idle; the first request
+#    after that will be slow (cold start) while it spins back up.
+#  - The filesystem is ephemeral — uploaded files under UPLOAD_DIR do
+#    not survive a deploy or restart. That's fine for QueryLens since
+#    uploads are meant to be short-lived working data, but don't rely
+#    on them for persistent storage.
+#  - Free web services get a *.onrender.com URL automatically; no
+#    custom domain config is included here.
+# ------------------------------------------------------------------

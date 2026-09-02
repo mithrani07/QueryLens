@@ -1,0 +1,33 @@
+querylens/
+│
+├── frontend/
+│   ├── index.html
+│   ├── style.css
+│   └── script.js
+│
+├── backend/
+│   ├── main.py
+│   │
+│   ├── routes/
+│   │   ├── upload.py
+│   │   ├── database.py
+│   │   └── query.py
+│   │
+│   ├── services/
+│   │   ├── file_service.py
+│   │   ├── schema_service.py
+│   │   ├── database_service.py
+│   │   ├── llm_service.py
+│   │   └── sql_service.py
+│   │
+│   ├── prompts.py
+│   ├── config.py
+│   └── requirements.txt
+│
+├── uploads/
+│   └── .gitkeep
+│
+├── .env
+├── .gitignore
+├── render.yaml
+└── README.md

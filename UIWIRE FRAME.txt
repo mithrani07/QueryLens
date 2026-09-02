@@ -1,0 +1,34 @@
+┌─────────────────────────────────────────────────────────┐
+│                    QueryLens                            │
+│            Talk to your data with SQL                   │
+│                                                         │
+│  ┌───────────────────────────────────────────────────┐  │
+│  │ 📁 Drop CSV / Excel / JSON here                   │  │
+│  │                                                   │  │
+│  │               or upload a database                │  │
+│  └───────────────────────────────────────────────────┘  │
+│                                                         │
+│  📊 employees.csv                                       │
+│  Tables: employees                                      │
+│                                                         │
+│  ┌───────────────────────────────────────────────────┐  │
+│  │ Ask your question...                              │  │
+│  │                                                   │  │
+│  │ "Find employees with salary above 10 lakh"         │  │
+│  └───────────────────────────────────────────────────┘  │
+│                                                         │
+│                    ✨ Generate SQL                       │
+│                                                         │
+├─────────────────────────────────────────────────────────┤
+│ GENERATED SQL                                           │
+│                                                         │
+│ SELECT *                                                │
+│ FROM employees                                          │
+│ WHERE salary > 1000000;                                 │
+│                                                         │
+│                          📋 Copy                        │
+│                                                         │
+│ Explanation                                             │
+│ This query retrieves employees whose salary exceeds     │
+│ ₹10 lakh. It returns all columns for matching rows.     │
+└─────────────────────────────────────────────────────────┘

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QueryLens — Talk to your data with SQL</title>
+  <meta name="description" content="Upload a spreadsheet or connect a database, ask a question in plain English, and get back a validated SQL query with an explanation." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" />
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <div class="backdrop" aria-hidden="true"></div>
+
+  <div class="page">
+
+    <!-- ================= HEADER ================= -->
+    <header class="site-header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" width="22" height="22" fill="none">
+            <circle cx="14" cy="14" r="9.5" stroke="currentColor" stroke-width="2.2"/>
+            <line x1="21" y1="21" x2="28" y2="28" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/>
+            <path d="M10.5 14h7M14 10.5v7" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+          </svg>
+        </span>
+        <span class="brand-name">QueryLens</span>
+      </div>
+      <p class="brand-tagline">Talk to your data with SQL</p>
+    </header>
+
+    <main class="workspace">
+
+      <!-- ================= SOURCE PANEL ================= -->
+      <section class="panel source-panel" aria-labelledby="source-heading">
+        <div class="panel-head">
+          <h2 id="source-heading">Connect your data</h2>
+          <div class="source-tabs" role="tablist" aria-label="Data source type">
+            <button type="button" class="source-tab is-active" role="tab" aria-selected="true" id="tab-file" aria-controls="panel-file" data-source="file">
+              File upload
+            </button>
+            <button type="button" class="source-tab" role="tab" aria-selected="false" id="tab-db" aria-controls="panel-db" data-source="database">
+              Database
+            </button>
+          </div>
+        </div>
+
+        <!-- File upload source -->
+        <div class="source-view is-active" id="panel-file" role="tabpanel" aria-labelledby="tab-file">
+          <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Upload a CSV, Excel, or JSON file">
+            <!--
+              NOTE: .xls (legacy BIFF Excel) is intentionally NOT accepted
+              here. The backend parses Excel uploads via pandas with
+              engine="openpyxl", which can only read the modern .xlsx
+              (OOXML) format - it cannot read .xls, and xlrd (the library
+              that could) is not a project dependency. Offering .xls in
+              the picker would let a user select a file that is
+              guaranteed to fail server-side with a confusing 422.
+            -->
+            <input type="file" id="file-input" accept=".csv,.xlsx,.json" hidden />
+            <svg class="dropzone-icon" viewBox="0 0 24 24" width="30" height="30" fill="none" aria-hidden="true">
+              <path d="M12 15V4M12 4L7.5 8.5M12 4l4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+              <path d="M4 15v3a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <p class="dropzone-title">Drop a CSV, Excel, or JSON file</p>
+            <p class="dropzone-subtitle">or click to browse — up to 15 MB</p>
+          </div>
+        </div>
+
+        <!-- Database source -->
+        <div class="source-view" id="panel-db" role="tabpanel" aria-labelledby="tab-db" hidden>
+          <form class="db-form" id="db-form" autocomplete="off">
+            <label class="field-label" for="db-connection-string">PostgreSQL connection string</label>
+            <input
+              type="password"
+              id="db-connection-string"
+              class="field-input"
+              placeholder="postgresql://user:password@host:5432/database"
+              autocomplete="new-password"
+              spellcheck="false"
+            />
+            <div class="db-form-row">
+              <div class="db-form-field">
+                <label class="field-label" for="db-schema">Schema</label>
+                <input type="text" id="db-schema" class="field-input field-input--compact" placeholder="public" value="public" spellcheck="false" />
+              </div>
+              <button type="submit" class="btn btn-secondary" id="connect-db-btn">
+                <span class="btn-label">Connect</span>
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Schema preview badge -->
+        <div class="schema-preview" id="schema-preview" hidden>
+          <div class="schema-file">
+            <svg class="schema-file-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true">
+              <path d="M6 3h8l4 4v14a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1V4a1 1 0 0 1 1-1Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+              <path d="M14 3v4h4" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+            </svg>
+            <span id="schema-filename">employees.csv</span>
+            <button type="button" class="schema-clear" id="schema-clear" aria-label="Remove this data source" title="Remove">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true">
+                <path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+              </svg>
+            </button>
+          </div>
+          <div class="schema-tables" id="schema-tables" aria-label="Detected tables">
+            <!-- table chips injected by script.js -->
+          </div>
+        </div>
+      </section>
+
+      <!-- ================= QUESTION PANEL ================= -->
+      <section class="panel question-panel" aria-labelledby="question-heading">
+        <h2 id="question-heading" class="visually-hidden">Ask a question</h2>
+
+        <div class="question-box">
+          <label class="visually-hidden" for="question-input">Ask your question</label>
+          <textarea
+            id="question-input"
+            class="question-input"
+            placeholder="Find employees with salary above 10 lakh"
+            rows="2"
+            disabled
+          ></textarea>
+
+          <div class="suggestions" id="suggestions" aria-label="Example questions">
+            <button type="button" class="suggestion-chip" data-question="Show the top 5 rows">Top 5 rows</button>
+            <button type="button" class="suggestion-chip" data-question="Count rows grouped by each category column">Group by category</button>
+            <button type="button" class="suggestion-chip" data-question="Find the average of the main numeric column">Average value</button>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary btn-generate" id="generate-btn" disabled>
+          <span class="btn-generate-icon" aria-hidden="true">✨</span>
+          <span class="btn-label">Generate SQL</span>
+        </button>
+
+        <p class="hint" id="source-hint">Upload a file or connect a database to get started.</p>
+      </section>
+
+      <!-- ================= OUTPUT PANEL ================= -->
+      <section class="panel output-panel" id="output-panel" aria-labelledby="output-heading" hidden>
+
+        <!-- Loading skeleton -->
+        <div class="output-loading" id="output-loading" hidden>
+          <div class="loading-row">
+            <span class="loading-dot"></span>
+            <span class="loading-dot"></span>
+            <span class="loading-dot"></span>
+            <span class="loading-text">Generating your query…</span>
+          </div>
+          <div class="skeleton skeleton-line skeleton-line--full"></div>
+          <div class="skeleton skeleton-line skeleton-line--full"></div>
+          <div class="skeleton skeleton-line skeleton-line--short"></div>
+          <div class="skeleton skeleton-line skeleton-line--medium"></div>
+        </div>
+
+        <!-- Result content -->
+        <div class="output-content" id="output-content" hidden>
+
+          <div class="output-block">
+            <div class="output-block-head">
+              <h2 id="output-heading">Generated SQL</h2>
+              <button type="button" class="btn btn-copy" id="copy-btn">
+                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" aria-hidden="true">
+                  <rect x="9" y="9" width="12" height="12" rx="2" stroke="currentColor" stroke-width="1.6"/>
+                  <path d="M5 15V5a2 2 0 0 1 2-2h10" stroke="currentColor" stroke-width="1.6"/>
+                </svg>
+                <span class="btn-label">Copy</span>
+              </button>
+            </div>
+
+            <pre class="sql-block" tabindex="0"><code id="sql-output" class="language-sql"></code></pre>
+          </div>
+
+          <div class="output-block">
+            <h3 class="output-subheading">Explanation</h3>
+            <p class="explanation-text" id="explanation-output"></p>
+          </div>
+
+          <div class="output-block output-preview" id="result-preview-block" hidden>
+            <div class="output-block-head">
+              <h3 class="output-subheading">Result preview</h3>
+              <span class="preview-meta" id="preview-meta"></span>
+            </div>
+            <div class="table-scroll">
+              <table class="result-table" id="result-table">
+                <thead id="result-table-head"></thead>
+                <tbody id="result-table-body"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Error state -->
+        <div class="output-error" id="output-error" hidden>
+          <svg viewBox="0 0 24 24" width="20" height="20" fill="none" aria-hidden="true">
+            <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/>
+            <path d="M12 8v5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/>
+            <circle cx="12" cy="16" r="0.9" fill="currentColor"/>
+          </svg>
+          <p id="output-error-text">Something went wrong.</p>
+        </div>
+      </section>
+
+    </main>
+
+    <footer class="site-footer">
+      <p>QueryLens runs your question through an LLM, then validates every query before it touches your data.</p>
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-core.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/autoloader/prism-autoloader.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>
