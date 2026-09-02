@@ -378,6 +378,9 @@ textarea:focus-visible {
 /* ---------------------------------------------------------- */
 /* Schema preview badge & table chips                         */
 /* ---------------------------------------------------------- */
+/* ---------------------------------------------------------- */
+/* Schema preview badge & table chips (Fixed Bounds)          */
+/* ---------------------------------------------------------- */
 .schema-preview {
   margin-top: 16px;
   padding-top: 16px;
@@ -386,14 +389,17 @@ textarea:focus-visible {
   flex-direction: column;
   gap: 10px;
   width: 100%;
+  max-width: 100%;
+  overflow: hidden;
 }
 
 .schema-file {
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 8px;
   align-self: flex-start;
   max-width: 100%;
+  min-width: 0; /* Forces long strings to stay inside flex container */
   background: var(--accent-soft);
   border: 1px solid rgba(59, 130, 246, 0.3);
   color: var(--accent-strong);
@@ -404,8 +410,9 @@ textarea:focus-visible {
 }
 
 #schema-filename {
-  display: inline-block;
-  max-width: 100%;
+  display: block;
+  flex: 1;
+  min-width: 0; /* Enables ellipsis truncation inside flexbox */
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -436,9 +443,10 @@ textarea:focus-visible {
 
 .schema-tables {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 6px;
   width: 100%;
+  max-width: 100%;
 }
 
 .schema-table-chip {
@@ -447,13 +455,13 @@ textarea:focus-visible {
   color: var(--text-muted);
   background: rgba(255, 255, 255, 0.04);
   border: 1px solid var(--border-soft);
-  padding: 5px 10px;
+  padding: 6px 10px;
   border-radius: var(--radius-sm);
+  width: 100%;
   max-width: 100%;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  display: inline-block;
 }
 
 /* ---------------------------------------------------------- */
