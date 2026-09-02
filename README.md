@@ -1,6 +1,6 @@
 # QueryLens
 
-🚀 **Live Demo:** [https://querylens-ex3m.onrender.com](https://querylens-ex3w.onrender.com)
+🚀 **Live Demo:** [https://querylens-ex3m.onrender.com](https://querylens-ex3m.onrender.com)
 =======
 🚀 **Live Demo:** [https://querylens-ex3m.onrender.com](https://querylens-ex3m.onrender.com)
 
@@ -11,7 +11,7 @@ live result preview.
 
 ```
 "Find employees with salary above 10 lakh"
-        │
+        
         ▼
 SELECT * FROM employees WHERE salary > 1000000;
 ```
