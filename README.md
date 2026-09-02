@@ -1,5 +1,9 @@
 # QueryLens
+
 🚀 **Live Demo:** [https://querylens-ex3m.onrender.com](https://querylens-ex3w.onrender.com)
+=======
+🚀 **Live Demo:** [https://querylens-ex3m.onrender.com](https://querylens-ex3m.onrender.com)
+
 **Talk to your data with SQL.** Upload a CSV/Excel/JSON file or connect a
 PostgreSQL database, ask a question in plain English, and get back a
 validated, executable SQL query with a plain-language explanation and a
